@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - IT Support</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="/admin/">
+                <i class="bi bi-speedometer2"></i> IT Support Admin
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#dashboardTab" onclick="event.preventDefault(); showTab('dashboard', event)">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#ticketsTab" onclick="event.preventDefault(); showTab('tickets', event)">Tickets</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#reportsTab" onclick="event.preventDefault(); showTab('reports', event)">Reports</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> Admin
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/admin/logout">Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 bg-light sidebar p-4">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body text-center">
+                        <i class="bi bi-speedometer2 display-4 text-primary mb-3"></i>
+                        <h5>Dashboard</h5>
+                        <p class="text-muted small">Manage and monitor tickets</p>
+                    </div>
+                </div>
+
+                <div class="list-group">
+                    <button class="list-group-item list-group-item-action active" onclick="showTab('dashboard', event)">
+                        <i class="bi bi-graph-up"></i> Dashboard
+                    </button>
+                    <button class="list-group-item list-group-item-action" onclick="showTab('tickets', event)">
+                        <i class="bi bi-ticket"></i> All Tickets
+                    </button>
+                    <button class="list-group-item list-group-item-action" onclick="showTab('details', event)">
+                        <i class="bi bi-search"></i> Ticket Details
+                    </button>
+                    <button class="list-group-item list-group-item-action" onclick="showTab('reports', event)">
+                        <i class="bi bi-file-earmark-excel"></i> Reports
+                    </button>
+                    <button class="list-group-item list-group-item-action" onclick="showTab('teams', event)">
+                        <i class="bi bi-people"></i> Support Teams
+                    </button>
+                </div>
+
+                <div class="mt-4 p-3 bg-info bg-opacity-10 rounded">
+                    <small class="text-muted">
+                        <i class="bi bi-info-circle"></i>
+                        System Status: <span class="badge bg-success">Active</span>
+                    </small>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="col-md-9 p-4">
+                <!-- Dashboard Tab -->
+                <div id="dashboardTab" class="tab-content active">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h2><i class="bi bi-graph-up"></i> Dashboard</h2>
+                            <hr>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Cards -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3">
+                            <div class="card border-left-primary shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-grow-1">
+                                            <h6 class="text-muted fw-semibold mb-1">Total Tickets</h6>
+                                            <h3 class="mb-0" id="totalTickets">0</h3>
+                                        </div>
+                                        <i class="bi bi-ticket display-5 text-primary opacity-50"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card border-left-success shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-grow-1">
+                                            <h6 class="text-muted fw-semibold mb-1">Resolved</h6>
+                                            <h3 class="mb-0" id="resolvedTickets">0</h3>
+                                        </div>
+                                        <i class="bi bi-check-circle display-5 text-success opacity-50"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card border-left-warning shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-grow-1">
+                                            <h6 class="text-muted fw-semibold mb-1">Open</h6>
+                                            <h3 class="mb-0" id="openTickets">0</h3>
+                                        </div>
+                                        <i class="bi bi-exclamation-circle display-5 text-warning opacity-50"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card border-left-danger shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-grow-1">
+                                            <h6 class="text-muted fw-semibold mb-1">Critical</h6>
+                                            <h3 class="mb-0" id="criticalTickets">0</h3>
+                                        </div>
+                                        <i class="bi bi-fire display-5 text-danger opacity-50"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Section -->
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="card shadow-sm">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">Tickets by Category</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div id="categoryChart" style="height: 300px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card shadow-sm">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">Ticket Status Distribution</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div id="statusChart" style="height: 300px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tickets Tab -->
+                <div id="ticketsTab" class="tab-content">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h2><i class="bi bi-ticket"></i> Manage Tickets</h2>
+                            <hr>
+                        </div>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
+                            <div class="row g-2">
+                                <div class="col-md-3">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-select form-select-sm" id="statusFilter" onchange="loadTickets()">
+                                        <option value="">All</option>
+                                        <option value="Open">Open</option>
+                                        <option value="Assigned">Assigned</option>
+                                        <option value="In Progress">In Progress</option>
+                                        <option value="Resolved">Resolved</option>
+                                        <option value="Closed">Closed</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Category</label>
+                                    <select class="form-select form-select-sm" id="categoryFilter" onchange="loadTickets()">
+                                        <option value="">All Categories</option>
+                                        <option value="Network">Network</option>
+                                        <option value="Email">Email & Collaboration</option>
+                                        <option value="Login">Login & Access</option>
+                                        <option value="Hardware">Hardware</option>
+                                        <option value="Software">Software</option>
+                                        <option value="Database">Database</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Priority</label>
+                                    <select class="form-select form-select-sm" id="priorityFilter" onchange="loadTickets()">
+                                        <option value="">All Priorities</option>
+                                        <option value="P1 - Critical">Critical</option>
+                                        <option value="P2 - High">High</option>
+                                        <option value="P3 - Medium">Medium</option>
+                                        <option value="P4 - Low">Low</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">&nbsp;</label>
+                                    <button class="btn btn-primary form-control form-control-sm" onclick="loadTickets()">
+                                        <i class="bi bi-arrow-repeat"></i> Refresh
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tickets Table -->
+                    <div class="card shadow-sm">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>Ticket ID</th>
+                                        <th>User</th>
+                                        <th>Category</th>
+                                        <th>Priority</th>
+                                        <th>Status</th>
+                                        <th>Assigned To</th>
+                                        <th>Created</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ticketsTableBody">
+                                    <tr><td colspan="8" class="text-center text-muted py-4">Load tickets...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Details Tab -->
+                <div id="detailsTab" class="tab-content">
+                    <h2><i class="bi bi-search"></i> Ticket Details</h2>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="ticketIdInput" placeholder="Enter Ticket ID...">
+                        <button class="btn btn-primary" onclick="loadTicketDetails()">Search</button>
+                    </div>
+                    <div id="ticketDetailsContainer"></div>
+                </div>
+
+                <!-- Reports Tab -->
+                <div id="reportsTab" class="tab-content">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h2><i class="bi bi-file-earmark-excel"></i> Reports</h2>
+                            <hr>
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="card shadow-sm">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-file-earmark-excel display-4 text-success mb-3"></i>
+                                    <h5>All Tickets Report</h5>
+                                    <p class="text-muted">Complete list of all tickets with details</p>
+                                    <button class="btn btn-success" onclick="downloadReport('all')">
+                                        <i class="bi bi-download"></i> Download Excel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card shadow-sm">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-bar-chart display-4 text-primary mb-3"></i>
+                                    <h5>Summary Report</h5>
+                                    <p class="text-muted">Statistics and breakdown by status, category, priority</p>
+                                    <button class="btn btn-primary" onclick="downloadReport('summary')">
+                                        <i class="bi bi-download"></i> Download Excel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card shadow-sm">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-calendar display-4 text-info mb-3"></i>
+                                    <h5>Date-Wise Report</h5>
+                                    <p class="text-muted">Tickets grouped by creation date</p>
+                                    <button class="btn btn-info" onclick="downloadReport('date')">
+                                        <i class="bi bi-download"></i> Download Excel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card shadow-sm">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-folder display-4 text-warning mb-3"></i>
+                                    <h5>Category-Wise Report</h5>
+                                    <p class="text-muted">Tickets grouped by category</p>
+                                    <button class="btn btn-warning" onclick="downloadReport('category')">
+                                        <i class="bi bi-download"></i> Download Excel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card shadow-sm">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-clock-history display-4 text-secondary mb-3"></i>
+                                    <h5>With History & Audit Trail</h5>
+                                    <p class="text-muted">Tickets with complete activity history</p>
+                                    <button class="btn btn-secondary" onclick="downloadReport('history')">
+                                        <i class="bi bi-download"></i> Download Excel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teams Tab -->
+                <div id="teamsTab" class="tab-content">
+                    <h2><i class="bi bi-people"></i> Support Teams</h2>
+                    <div id="teamsContainer" class="row g-3 mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Ticket Details -->
+    <div class="modal fade" id="ticketModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ticket Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <!-- Content loaded dynamically -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="updateTicketStatus()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>

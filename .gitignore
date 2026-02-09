@@ -1,0 +1,55 @@
+# Python virtual environment
+.venv/
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Data files
+data/reports/*.xlsx
+data/reports/*.xls
+data/test_downloads/
+
+# Environment variables
+.env
+.env.local
+local_settings.py
+
+# OS files
+.DS_Store
+Thumbs.db
+*.log
+
+# Flask
+instance/
+.webassets-cache
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Temporary files
+*.bak
+*.tmp
+temp/
